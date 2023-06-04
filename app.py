@@ -94,15 +94,38 @@ def index():
         # Remove the temporary file
         os.remove(filename)
 
-        # Send confirmation email to the sender
-        sender_email = request.form.get('tutors_email')
-        confirmation_subject = 'Mock Result Submission Confirmation'
-        confirmation_body = 'Thank you for submitting the student data. Your submission has been received and will be processed.'
-        confirmation_msg = Message(subject=confirmation_subject, sender=app.config['MAIL_USERNAME'], recipients=[sender_email])
-        confirmation_msg.body = confirmation_body
-        mail.send(confirmation_msg)
+        # Get the current date and time
+        current_time = datetime.now()
 
-        return redirect(url_for('index'))
+        # Define the deadline date and time
+        deadline = datetime(2023, 6, 14, 12, 0, 0)
+
+        # Compare the current time with the deadline
+        if current_time < deadline:
+            # Send confirmation email to the sender
+            sender_email = request.form.get('tutors_email')
+            confirmation_subject = 'Mock Result Submission Confirmation'
+            confirmation_body = 'Thank you for submitting the student data. Your submission has been received and ' \
+                                'will be processed.'
+            confirmation_msg = Message(subject=confirmation_subject, sender=app.config['MAIL_USERNAME'],
+                                       recipients=[sender_email])
+            confirmation_msg.body = confirmation_body
+            mail.send(confirmation_msg)
+
+            return redirect(url_for('index'))
+        else:
+            # Send confirmation email to the sender
+            sender_email = request.form.get('tutors_email')
+            confirmation_subject = 'Mock Result Submission Confirmation'
+            confirmation_body = 'Thank you for submitting the student data. Your submission has been received and ' \
+                                'will be processed. However, please note that your subsmission time have passed the ' \
+                                'deadline. This may result in a disciplinary action'
+            confirmation_msg = Message(subject=confirmation_subject, sender=app.config['MAIL_USERNAME'],
+                                       recipients=[sender_email])
+            confirmation_msg.body = confirmation_body
+            mail.send(confirmation_msg)
+
+            return redirect(url_for('index'))
 
     return render_template('index.html')
 
